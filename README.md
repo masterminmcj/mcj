@@ -9,3 +9,4 @@
 * 按照主页code 下Quick Setup逐添加到命令行
 * 初步完成建立第一个README.md的文件创建
 ---
+简书git教程参考资料<http://www.jianshu.com/p/deb5eddbffb8>
