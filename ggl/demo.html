@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<style>
+    .box {
+        width: 750px;
+        height: 280px;
+        position: relative;
+
+    }
+    .bg {
+        width: 750px;
+        height: 280px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        background-image: url("./award.jpg");
+        background-repeat: no-repeat;
+        opacity: 0;
+    }
+    #cav {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
+
+    }
+
+</style>
+
+<div class="box">
+
+    <div class="bg"></div>
+    <canvas width="750" height="280" id="cav"></canvas>
+
+    <img src="scratch-2x.jpg" id="bgImg" style="display: none">
+</div>
+<script>
+    var cav = document.getElementById('cav');
+    var ctx = cav.getContext('2d');
+
+    var config = {
+        //前置覆盖图，若没有使用纯色覆盖
+        coverImg: './scratch-2x.jpg',
+        //刮卡指针半径
+        pointerRadius: '30',
+        //规定最大占时显示所有内容
+        maxRange: 0.7,
+        //全部刮开时是否有动画
+        hasAnimate:true
+    };
+    function createScracthCard(config) {
+        this.coverImg = config.coverImg;
+        this.pointerRadius = config.pointerRadius;
+        this.maxRange = config.maxRange;
+        this.canDraw = false;
+        this.init = function () {
+            if (this.coverImg) {
+                ctx.moveTo(0, 0);
+
+                   var coverImg = document.getElementById('bgImg');
+                    ctx.drawImage(coverImg, 0, 0);
+
+                ctx.globalCompositeOperation = "destination-out";
+                console.log(444)
+            } else {
+                ctx.moveTo(0, 0);
+                ctx.fillStyle = '#eee';
+                ctx.fillRect(0, 0, 750, 280);
+            }
+            this.addEvent();
+        };
+        this.addEvent = function () {
+            var that = this;
+            cav.addEventListener('mousedown', function () {
+                document.getElementsByClassName('bg')[0].style.opacity='1';
+                that.canDraw = true;
+            });
+            cav.addEventListener('mouseup', function () {
+                that.canDraw = false;
+            });
+            cav.addEventListener('mousemove', function (e) {
+                that.drawScratch(e);
+            });
+        };
+        this.drawScratch = function (e) {
+            if (this.canDraw) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+                ctx.beginPath();
+                ctx.arc(x, y, this.pointerRadius, 0, Math.PI * 2, true);
+                ctx.fill();
+                var nowRange=this.getShowRange();
+               if(nowRange>=this.maxRange){
+
+                   this.showAll();
+               }
+            }
+
+
+        };
+        this.getShowRange=function () {
+            var imgData = ctx.getImageData(0, 0, cav.width, cav.height);
+            var pixels = imgData.data;
+            var transPixels = [];
+            for (var i = 0; i < pixels.length; i += 4) {
+                if (pixels[i + 3] < 128) {
+                    transPixels.push(pixels[i + 3]);
+                }
+            }
+            return (transPixels.length / (pixels.length / 4) * 100).toFixed(2)/100
+        };
+        this.showAll=function () {
+            cav.style.transition='all 2000ms linear';
+            cav.style.opacity='0';
+            setTimeout(function () {
+                ctx.clearRect(0,0,cav.width,cav.height);
+            },2000)
+        }
+    }
+
+
+
+    window.onload=function () {
+        var card = new createScracthCard(config);
+        card.init();
+
+    };
+
+</script>
+</body>
+</html>
