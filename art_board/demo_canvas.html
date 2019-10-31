@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>canvas</title>
+</head>
+<body>
+<style>
+    #drawBoard {
+        display: block;
+        margin: 100px auto;
+        box-shadow: 0 0 10px #ccc;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    .cavBox {
+        position: relative;
+    }
+
+    .downloads {
+        position: absolute;
+        right: 10%;
+        top: 30px;
+    }
+</style>
+<h1>canvas画板</h1>
+
+<div class="cavBox">
+    <a class="downloads" href="" download="canvas.png">下载到本地</a>
+    <canvas id="drawBoard" width="800" height="500">
+
+    </canvas>
+
+
+</div>
+
+\
+<script>
+
+    let cav = document.getElementById('drawBoard');
+    let ctx = cav.getContext('2d');
+    let LinkUrl = "";
+    let startPoint = {
+        isStart: false
+    };
+
+    function windowTocanvas(canvas, x, y) {
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x: x - bbox.left * (canvas.width / bbox.width),
+            y: y - bbox.top * (canvas.height / bbox.height)
+        };
+    }
+
+
+    function DownLoad() {
+
+        let cavs = document.getElementById('drawBoard');
+        let downloads=document.querySelectorAll('.downloads')[0];
+        LinkUrl = cavs.toDataURL("image/png");
+      downloads.href=LinkUrl;
+    }
+
+    cav.addEventListener('mousedown', function (e) {
+
+        let cx = e.clientX, cy = e.clientY;
+        let transObj = windowTocanvas(cav, cx, cy);
+        startPoint.x = transObj.x;
+        startPoint.y = transObj.y;
+        startPoint.isStart = true;
+    });
+
+
+    cav.addEventListener('mousemove', function (e) {
+        if (!startPoint.isStart) {
+            return
+        }
+        let cx = e.clientX, cy = e.clientY;
+        let transObj = windowTocanvas(cav, cx, cy);
+        ctx.beginPath();
+        ctx.moveTo(startPoint.x, startPoint.y);
+        ctx.lineTo(transObj.x, transObj.y);
+        ctx.strokeStyle = "#f00";
+        ctx.stroke();
+        startPoint.x = transObj.x;
+        startPoint.y = transObj.y
+    });
+    cav.addEventListener('mouseup', function (e) {
+        startPoint.isStart = false;
+        DownLoad();
+
+    })
+
+</script>
+</body>
+</html>
