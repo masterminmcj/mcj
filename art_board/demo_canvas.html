@@ -46,7 +46,8 @@
     let startPoint = {
         isStart: false
     };
-
+    ctx.fillStyle="#fff";
+    ctx.fillRect(0, 0, cav.width, cav.height);
     function windowTocanvas(canvas, x, y) {
         var bbox = canvas.getBoundingClientRect();
         return {
