@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>demo</title>
+    <script src="face-api.js"></script>
+    <script src="js/commons.js"></script>
+    <script src="js/faceDetectionControls.js"></script>
+    <script src="js/imageSelectionControls.js"></script>
+    <script src="js/draw.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+</head>
+<body>
+<style>
+    .imgbox {
+        position: relative;
+    }
+
+    #cav {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+</style>
+
+<div class="demo-div">
+    <h1>测试demo</h1>
+    <div class="imgbox">
+
+        <img src="1.jpg" id="testImg">
+
+        <canvas id="cav" width="500" height="720"></canvas>
+    </div>
+
+
+</div>
+
+
+<script>
+
+
+    async function updateResults() {
+        if (!isFaceDetectionModelLoaded()) {
+            return
+        }
+        const inputImgEl = $('#testImg').get(0);
+        // await faceapi.nets.ssdMobilenetv1.load('/weights');
+        console.log(inputImgEl)
+        const options = getFaceDetectorOptions();
+        const results = await faceapi.detectAllFaces(inputImgEl, options);
+        const canvas = $('#cav').get(0);
+        const ctx = document.getElementById('cav').getContext('2d');
+        //matchDimensions和resizeResults使识别出坐标匹配图片的大小，保证绘制出的信息位置正确
+        faceapi.matchDimensions(canvas, inputImgEl);
+        const faces = await faceapi.detectAllFaces(inputImgEl).withFaceLandmarks();
+        // const  res1=await  faceapi.detectAllFaces(inputImgEl,options).withFaceLandmarks()
+        //     .withFaceDescriptors()
+        //用提供的高级方法绘制面部五官轮廓
+        faceapi.draw.drawFaceLandmarks(canvas, faces)
+        //为识别图增加备注
+        // const drawOptions = {
+        //     label: '吴京',
+        //     lineWidth: 2
+        // };
+        // const drawBox = new faceapi.draw.DrawBox(faces[0].detection.box, drawOptions);
+        // drawBox.draw(canvas);
+        const jawOutline = faces[0].landmarks.getJawOutline();
+        const nose=faces[0].landmarks.getNose();
+        let len = jawOutline.length;
+        var sw = (jawOutline[len - 1].x - jawOutline[0].x) / 4;
+        var sh = sw * 179 / 268;
+        var posFlags = {};
+        posFlags.y=nose[2].y;
+        posFlags.x=nose[2].x+sw;
+        tools.drawPic(ctx, 'guoqi.png', posFlags, sw, sh);
+
+        /*       // 下巴轮廓
+              const jawOutline = faces[0].landmarks.getJawOutline()
+              // const nose=aaa.getNose();
+              // 鼻子
+              const noseArr = faces[0].landmarks.getNose();
+              // 嘴
+              const mouthArr  = faces[0].landmarks.getMouth();
+              // 左眼
+              const leftEye  = faces[0].landmarks.getLeftEye();
+              // 右眼
+              const rightEye  = faces[0].landmarks.getRightEye();
+              // 左眉毛
+              const leftEyeBbrow   = faces[0].landmarks.getLeftEyeBrow();
+              // 右眉毛
+              const rightEyeBbrow  = faces[0].landmarks.getRightEyeBrow();
+              tools.drawLine(ctx, jawOutline);
+              tools.drawLine(ctx, noseArr);
+              tools.drawLine(ctx, mouthArr);
+              tools.drawLine(ctx, leftEye);
+              tools.drawLine(ctx, rightEye);
+              tools.drawLine(ctx, leftEyeBbrow);
+              tools.drawLine(ctx, rightEyeBbrow);
+      */
+    }
+
+
+    async function run() {
+
+        await getCurrentFaceDetectionNet().load('/');
+        // load face detection
+
+        // 加载Landmark模型
+        await faceapi.loadFaceLandmarkModel('/');
+
+        await changeFaceDetector(SSD_MOBILENETV1);
+        // start processing image
+        updateResults()
+    }
+
+    $(document).ready(function () {
+        // initImageSelectionControls();
+        initFaceDetectionControls();
+        run()
+    })
+
+</script>
+
+</body>
+</html>
