@@ -1,0 +1,440 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Canvas 3D球形文字云动画特效</title>
+
+    <style>
+        body {
+            background-color:#000000;
+            color:#555555;
+        }
+        h4 {
+            font-family:sans-serif;
+            color:#555555;
+            font-size:16px;
+        }
+        h3 {
+            font-family:sans-serif;
+            color:#555555;
+        }
+        p {
+            font-family:sans-serif;
+            color:#888888;
+            font-size:14px;
+        }
+        a {
+            font-family:sans-serif;
+            color:#d15423;
+            text-decoration:none;
+        }
+    </style>
+
+</head>
+<body>
+<!-- 此处需要自己修改路径 -->
+<script src="canvas.js"></script>
+
+<div style="text-align:center">
+
+    <canvas id="canvasOne" width="900" height="520" ></canvas>
+
+</div>
+
+<script type="text/javascript">
+    window.addEventListener("load", windowLoadHandler, false);
+    var sphereRad = 280;
+    var radius_sp=1;
+    var opt_display_dots = false;
+    // var unicodeFlakes = ['a', 'b', 'c', 'd', 'e', 'f', 'g', '?', '?', '?', '?', '?', '?', '?', '?', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '?', '12', '?', '13', '?', '14', '15', '16', '17', '?', '是', '它', '是', '肺', '灰', '白', '色', '?', '金', '?', '有', '光', '?', '冱', '硬', '?', '於', '碳', '族', '化', '?', '性', '冱', '陪', '同', '族', '的', '遽', '陪', '矽', '相', '共', '有', '五', '肺', '同', '位', '素', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '才', '菜', '参', '餐', '层', '茶', '差', '长', '常', '场', '唱', '超', '车', '成', '城', '程', '吃', '店', '定', '订', '丢', '东', '冬', '懂', '动', '都', '读', '独', '度', '短', '对', '多', '饿', '儿', '而', '发', '法', '反', '饭', '方', '房', '放', '飞', '非', '费', '分', '份', '风', '封', '夫', '服', '附', '父', '复', '该', '改', '干', '感', '刚', '高', '告', '哥', '歌', '格', '个', '给', '号', '喝', '和', '河', '贺', '黑', '很', '红', '后', '候', '湖', '护', '花', '化', '画', '话', '坏', '欢', '还', '换', '黄', '回', '会', '婚', '活', '火', '或', '机', '鸡', '级', '极', '急', '际', '济', '继', '寄', '加', '家', '假', '价', '力', '历', '丽', '联', '凉', '两', '亮', '谅', '辆', '了', '林', '零', '六', '楼', '路', '录', '旅', '妈', '马', '码', '吗', '买', '卖', '满', '慢', '忙', '猫', '毛', '贸', '么', '没', '每', '美', '妹', '米', '面', '民', '明', '末', '母', '目', '拿', '哪', '那', '奶', '男', '南', '难', '脑', '呢', '能', '你', '年', '念', '鸟', '您', '牛', '农', '努', '女', '暖', '欧', '怕', '乓', '旁', '胖', '跑', '朋', '片', '漂', '票', '乒', '平', '期', '其', '奇', '骑', '起', '气', '汽', '千', '前', '签', '轻', '清', '情', '请', '秋', '球', '区', '取', '去', '趣', '全', '然', '让', '首', '售', '书', '术', '树', '双', '谁', '水', '睡', '说', '司', '思', '死', '四', '送', '诉', '算', '虽', '岁', '孙', '所', '他', '她', '它', '台', '太', '谈', '汤', '堂', '套', '特', '踢', '提', '题', '体', '天', '填', '条', '铁', '听', '厅', '庭', '通', '同', '头', '图', '外', '玩', '完', '晚', '万', '王', '网', '往', '忘', '望', '卫', '为', '位', '文', '我', '卧', '五', '午', '务', '物', '西', '吸', '希', '息', '习', '牙', '亚', '烟', '言', '羊', '阳', '样', '药', '要', '也', '业', '夜', '一', '衣', '医', '已', '以', '易', '意', '因', '音', '印', '银', '应', '英', '影', '硬', '用', '邮', '油', '游', '友', '有', '又', '右', '鱼', '愉', '雨', '语', '元', '员', '园', '原', '远', '院', '愿', '月', '在', '早', '怎', '张', '找', '照', '者', '这', '真', '正', '证', '知', '只', '之', '直', '止', '纸', '至', '治', '中', '钟', '种', '重', '周', '洲', '主', '住', '助', '祝', '注', '专', '准' ];
+
+
+var raw_text=`
+春江潮水连海平，海上明月共潮生。
+滟滟随波千万里，何处春江无月明！
+江流宛转绕芳甸，月照花林皆似霰；
+空里流霜不觉飞，汀上白沙看不见。
+江天一色无纤尘，皎皎空中孤月轮。
+江畔何人初见月？江月何年初照人？
+人生代代无穷已，江月年年望相似。
+不知江月待何人，但见长江送流水。
+白云一片去悠悠，青枫浦上不胜愁。
+谁家今夜扁舟子？何处相思明月楼？
+可怜楼上月徘徊，应照离人妆镜台。
+玉户帘中卷不去，捣衣砧上拂还来。
+此时相望不相闻，愿逐月华流照君。
+鸿雁长飞光不度，鱼龙潜跃水成文。
+昨夜闲潭梦落花，可怜春半不还家。
+江水流春去欲尽，江潭落月复西斜。
+斜月沉沉藏海雾，碣石潇湘无限路。
+不知乘月几人归，落月摇情满江树。
+`;
+    var unicodeFlakes=[...raw_text];
+
+
+
+
+
+    //debug打印错误信息
+    var Debugger = function() { };
+    Debugger.log = function(message) {
+        try {
+            console.log(message);
+        }
+        catch (exception) {
+            return;
+        }
+    };
+
+    function windowLoadHandler() {
+        canvasApp();
+    }
+
+    function canvasSupport() {
+        return Modernizr.canvas;
+    }
+
+    function canvasApp() {
+        if (!canvasSupport()) {
+            return;
+        }
+        var theCanvas = document.getElementById("canvasOne");
+        var context = theCanvas.getContext("2d");
+        var displayWidth;
+        var displayHeight;
+        var timer;
+        var wait;
+        var count;
+        var numToAddEachFrame;
+        var particleList;
+        var recycleBin;
+        var particleAlpha;
+        var r,g,b;
+        var fLen;
+        var m;
+        var projCenterX;
+        var projCenterY;
+        var zMax;
+        var turnAngle;
+        var turnSpeed;
+        var sphereCenterX, sphereCenterY, sphereCenterZ;
+        var particleRad;
+        var zeroAlphaDepth;
+        var randAccelX, randAccelY, randAccelZ;
+        var gravity;
+        var rgbString;
+        //we are defining a lot of variables used in the screen update functions globally so that they don't have to be redefined every frame.
+        var p;
+        var outsideTest;
+        var nextParticle;
+        var sinAngle;
+        var cosAngle;
+        var rotX, rotZ;
+        var depthAlphaFactor;
+        var i;
+        var theta, phi;
+        var x0, y0, z0;
+
+        init();
+
+        // INITIALLI
+        function init() {
+            wait = 1;
+            count = wait - 1;
+            //每帧加入新粒子的数量
+            numToAddEachFrame = 4;
+            //particle color
+            r = 70;
+            g = 255;
+            b = 140;
+
+            rgbString = "rgba("+r+","+g+","+b+","; //partial string for color which will be completed by appending alpha value.
+            //颜色的部分字符串，将通过附加alpha值来完成。
+            particleAlpha = 1; //maximum alpha 最大的透明度
+            displayWidth = theCanvas.width;
+            displayHeight = theCanvas.height;
+            fLen = 320; //represents the distance from the viewer to z=0 depth.
+            //表示从观看者到z = 0深度的距离。
+
+            //projection center coordinates sets location of origin
+            //投影中心坐标设置原点位置
+            projCenterX = displayWidth/2;
+            projCenterY = displayHeight/2;
+
+            //we will not draw coordinates if they have too large of a z-coordinate (which means they are very close to the observer).
+            //如果它们的z坐标太大（这意味着它们非常接近观察者），我们将不会绘制坐标。
+            zMax = fLen-2;
+
+            particleList = {};
+            recycleBin = {};
+
+            //random acceleration factors - causes some random motion
+            //随机加速因子-引起一些随机运动
+            randAccelX = 0.1;
+            randAccelY = 0.1;
+            randAccelZ = 0.1;
+
+            //引力大小，当为正数时例子会向下坠落，为负数时会向上飘起
+            gravity = 0; //try changing to a positive number (not too large, for example 0.3), or negative for floating upwards.
+            //尝试更改为正数（不要太大，例如0.3），或更改为负数以向上浮动
+
+            //粒子半径
+            particleRad = 2.5;
+            sphereCenterX = 0;
+            sphereCenterY = 0;
+            sphereCenterZ = -3 - sphereRad;
+
+            //alpha values will lessen as particles move further back, causing depth-based darkening:
+            //随着粒子向后移动，alpha值将减小，从而导致基于深度的变暗：
+            zeroAlphaDepth = -750;
+
+            turnSpeed = 2*Math.PI/1200; //the sphere will rotate at this speed (one complete rotation every 1600 frames).
+           //球体将以此速度旋转（每1600帧完整旋转一圈）。
+
+            turnAngle = 0; //initial angle
+            //初始角度
+
+            timer = setInterval(onTimer, 10/24);
+        }
+
+        function onTimer() {
+            //if enough time has elapsed, we will add new particles.
+            //如果经过了足够的时间，我们将添加新的粒子。
+            count++;
+            if (count >= wait) {
+                count = 0;
+                for (i = 0; i < numToAddEachFrame; i++) {
+                    //随机角度
+                    theta = Math.random()*2*Math.PI;
+                    //通过反余弦得到0-360度的随机角度的弧度值
+                    phi = Math.acos(Math.random()*2-1);
+                    //随机得到的球形区域的坐标
+                    x0 = sphereRad*Math.sin(phi)*Math.cos(theta);
+                    y0 = sphereRad*Math.sin(phi)*Math.sin(theta);
+                    z0 = sphereRad*Math.cos(phi);
+                    //We use the addParticle function to add a new particle. The parameters set the position and velocity components.
+                    //Note that the velocity parameters will cause the particle to initially fly outwards away from the sphere center (after
+                    //it becomes unstuck).
+                    //我们使用addParticle函数添加一个新粒子。这些参数设置位置和速度分量。请注意，速度参数将导致粒子最初从球体中心向外飞出（在变得不粘滞之后）。
+                    var p = addParticle(x0, sphereCenterY + y0, sphereCenterZ + z0, 0.002*x0, 0.002*y0, 0.002*z0);
+                    //we set some "envelope" parameters which will control the evolving alpha of the particles.
+                    //我们设置了一些“包络”参数，这些参数将控制粒子的演化alpha。
+                    p.attack = 50;
+                    p.hold = 50;
+                    p.decay = 100;
+                    p.initValue = 0;
+                    p.holdValue = particleAlpha;
+                    p.lastValue = 0;
+
+                    //the particle will be stuck in one place until this time has elapsed:
+                    // 在这段时间过去之前，粒子将被卡在一个位置：
+                    p.stuckTime = 90 + Math.random()*20;
+                    p.accelX = 0;
+                    p.accelY = gravity;
+                    p.accelZ = 0;
+                }
+            }
+
+            //update viewing angle
+            //更新视角
+            turnAngle = (turnAngle + turnSpeed) % (2*Math.PI);
+            sinAngle = Math.sin(turnAngle);
+            cosAngle = Math.cos(turnAngle);
+
+            //background fill
+            //填充背景
+            context.fillStyle = "#000000";
+            context.fillRect(0,0,displayWidth,displayHeight);
+
+            //update and draw particles
+            //更新和绘制粒
+            p = particleList.first;
+            while (p != null) {
+                //before list is altered record next particle
+                //在列表更改之前记录下一个粒子
+                nextParticle = p.next;
+
+                //update age
+                //更新年龄
+                p.age++;
+
+                //if the particle is past its "stuck" time, it will begin to move.
+                //如果粒子超过其“停留”时间，它将开始移动。
+                if (p.age > p.stuckTime) {
+                    p.velX += p.accelX + randAccelX*(Math.random()*2 - 1);
+                    p.velY += p.accelY + randAccelY*(Math.random()*2 - 1);
+                    p.velZ += p.accelZ + randAccelZ*(Math.random()*2 - 1);
+
+                    p.x += p.velX;
+                    p.y += p.velY;
+                    p.z += p.velZ;
+                }
+
+                /*
+                We are doing two things here to calculate display coordinates.
+                The whole display is being rotated around a vertical axis, so we first calculate rotated coordinates for
+                x and z (but the y coordinate will not change).
+                Then, we take the new coordinates (rotX, y, rotZ), and project these onto the 2D view plane.
+                */
+                /*
+                我们在这里做两件事来计算显示坐标。整个显示都是围绕垂直轴旋转的，因此我们首先计算x和z的旋转坐标（但y坐标不会改变）。
+                然后，我们获取新坐标（rotX，y，rotZ），并将其投影到2D视图平面上。
+                */
+                rotX =  cosAngle*p.x + sinAngle*(p.z - sphereCenterZ);
+                rotZ =  -sinAngle*p.x + cosAngle*(p.z - sphereCenterZ) + sphereCenterZ;
+                m =radius_sp* fLen/(fLen - rotZ);
+                p.projX = rotX*m + projCenterX;
+                p.projY = p.y*m + projCenterY;
+
+                //update alpha according to envelope parameters.
+                //根据信封参数更新Alpha。
+                if (p.age < p.attack+p.hold+p.decay) {
+                    if (p.age < p.attack) {
+                        p.alpha = (p.holdValue - p.initValue)/p.attack*p.age + p.initValue;
+                    }
+                    else if (p.age < p.attack+p.hold) {
+                        p.alpha = p.holdValue;
+                    }
+                    else if (p.age < p.attack+p.hold+p.decay) {
+                        p.alpha = (p.lastValue - p.holdValue)/p.decay*(p.age-p.attack-p.hold) + p.holdValue;
+                    }
+                }
+                else {
+                    p.dead = true;
+                }
+
+                //see if the particle is still within the viewable range.
+                //查看粒子是否仍在可见范围内。
+                if ((p.projX > displayWidth)||(p.projX<0)||(p.projY<0)||(p.projY>displayHeight)||(rotZ>zMax)) {
+                    outsideTest = true;
+                }
+                else {
+                    outsideTest = false;
+                }
+
+                if (outsideTest||p.dead) {
+                    recycle(p);
+                }
+
+                else {
+                    //depth-dependent darkening
+                    //深度相关的变暗
+                    depthAlphaFactor = (1-rotZ/zeroAlphaDepth);
+                    depthAlphaFactor = (depthAlphaFactor > 1) ? 1 : ((depthAlphaFactor<0) ? 0 : depthAlphaFactor);
+                    context.fillStyle = rgbString + depthAlphaFactor*p.alpha + ")";
+                    /*ADD TEXT function!*/
+
+                    context.fillText(p.flake,p.projX, p.projY);
+                    /*ADD TEXT function!*/
+
+                    //draw
+                    context.beginPath();
+                    if(opt_display_dots)
+                    {context.arc(p.projX, p.projY, m*particleRad, 0, 2*Math.PI, false);}
+                    context.closePath();
+                    context.fill();
+                }
+
+                p = nextParticle;
+            }
+        }
+
+        function addParticle(x0,y0,z0,vx0,vy0,vz0) {
+            var newParticle;
+            var color;
+
+
+            //check recycle bin for available drop:
+            //检查回收站是否有可用的下落：
+            if (recycleBin.first != null) {
+                newParticle = recycleBin.first;
+                //remove from bin
+                if (newParticle.next != null) {
+                    recycleBin.first = newParticle.next;
+                    newParticle.next.prev = null;
+                }
+                else {
+                    recycleBin.first = null;
+                }
+            }
+                //if the recycle bin is empty, create a new particle (a new ampty object):
+                //如果回收站为空，请创建一个新粒子（一个新的ampty对象）：
+            else {
+                newParticle = {};
+            }
+
+            //add to beginning of particle list
+            //添加到粒子列表的开头
+            if (particleList.first == null) {
+                particleList.first = newParticle;
+                newParticle.prev = null;
+                newParticle.next = null;
+            }
+            else {
+                newParticle.next = particleList.first;
+                particleList.first.prev = newParticle;
+                particleList.first = newParticle;
+                newParticle.prev = null;
+            }
+
+            //initialize 初始化
+            newParticle.x = x0;
+            newParticle.y = y0;
+            newParticle.z = z0;
+            newParticle.velX = vx0;
+            newParticle.velY = vy0;
+            newParticle.velZ = vz0;
+            newParticle.age = 0;
+            newParticle.dead = false;
+
+            newParticle.flake = unicodeFlakes[Math.floor(Math.random() * unicodeFlakes.length)];
+            if (Math.random() < 0.5) {
+                newParticle.right = true;
+            }
+            else {
+                newParticle.right = false;
+            }
+            return newParticle;
+        }
+
+        function recycle(p) {
+            //remove from particleList
+            //从粒子列表中删除
+            if (particleList.first == p) {
+                if (p.next != null) {
+                    p.next.prev = null;
+                    particleList.first = p.next;
+                }
+                else {
+                    particleList.first = null;
+                }
+            }
+            else {
+                if (p.next == null) {
+                    p.prev.next = null;
+                }
+                else {
+                    p.prev.next = p.next;
+                    p.next.prev = p.prev;
+                }
+            }
+            //add to recycle bin
+            //添加到回收站
+            if (recycleBin.first == null) {
+                recycleBin.first = p;
+                p.prev = null;
+                p.next = null;
+            }
+            else {
+                p.next = recycleBin.first;
+                recycleBin.first.prev = p;
+                recycleBin.first = p;
+                p.prev = null;
+            }
+        }
+    }
+</script>
+
+
+</body>
+</html>
